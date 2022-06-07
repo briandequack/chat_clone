@@ -45,8 +45,8 @@ dropdown.main.create2(new StackButton('Contacts', 'button4','menustack', 'contac
 dropdown.main.create2(new StackButton('Create group', 'button5','menustack', 'creategroupmenu'));
 dropdown.main.create2(new LogoutButton('Logout', 'logout'));
 
-
-var menuStack = leftSidebar.create2(new Stack('Container','menustack',0, 1100, 700, 0, 50, { 'notSelectedChildY':['getHeight',-1]}));
+//'notSelectedChildX':['getWidth',-1]
+var menuStack = leftSidebar.create2(new Stack('Container','menustack',0, 1100, 700, 0, 50, { 'notSelectedChildX':['getWidth',-1]}));
 var chatMenu2 = menuStack.create2(new ChatsMenu2('Container','chatsmenu',0, 1100, 700));
 
 
