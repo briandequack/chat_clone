@@ -4,7 +4,6 @@ import os
 sys.path.append("../config")
 from config import *
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = BASE_DIR / "templates"
 
@@ -21,7 +20,7 @@ DEBUG = False
 if DEBUG:
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOSTS = [config.host]
+    ALLOWED_HOSTS = [host]
 
 
 # Application definition
@@ -84,9 +83,9 @@ else:
     DATABASES = {
     'default': {
        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-       'NAME': config.database_name,
-       'USER': config.database_user,
-       'PASSWORD': config.database_password,
+       'NAME': database_name,
+       'USER': database_user,
+       'PASSWORD': database_password,
        'HOST': 'localhost',
        'PORT': '',
        }
