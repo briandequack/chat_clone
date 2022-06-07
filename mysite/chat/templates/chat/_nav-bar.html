@@ -1,0 +1,19 @@
+
+<!-- template for main navigation bar -->
+
+<nav class="navbar fixed-top navbar-dark bg-dark"  >
+  <div class="container-fluid">
+    <div class="d-flex align-items-center" onclick="stopProp(event)">
+      <button type="button" class="btn btn-dark position-relative navbar-toggler-icon toggle-md-none me-2" onclick="toggle()">
+        <div id="counter-holder-top">
+
+        </div>
+      </button>
+      <a class="navbar-brand" href="#">BlaBla</a>
+    </div>
+    <div class="navbar-light" style="color: white;">
+      {{ user.username }}
+      <a class="link-light" href="{% url 'accounts:logout' %}?next=/login" style="text-decoration: none;">Logout</a>
+    </div>
+  </div>
+</nav>

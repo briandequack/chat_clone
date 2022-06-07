@@ -1,0 +1,418 @@
+<style>
+  #templates{
+    display: none
+  }
+
+  .chat-log-messages{
+    color: #abb2bf;
+    position:absolute;
+    bottom:0px;
+    right:0px;
+    left:0px;
+    padding-bottom: 15px;
+    overflow-y:auto;
+    max-height:100%;
+
+  }
+
+  .vertical-aligned{
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+  }
+
+
+
+
+
+</style>
+
+
+
+<div id="templates">
+
+<!-- user -->
+
+<!-- end user -->
+
+
+
+<div id="user-title" class="d-flex align-items-center username%%" style="white-space: nowrap;  overflow:hidden;">
+  <div class="username%" style="margin-right: 5px;"></div>
+  <div class="ltsn%" style="margin-right: 15px;"></div>
+</div>
+
+
+<div id="chat-header" class="right-top-fixed-md border-bottom header%" style=" background-color:red; z-index: 5; ">
+  <div class="container-fluid d-flex justify-content-between align-items-center body">
+  </div>
+</div>
+
+
+
+
+<!-- keep -->
+  <div id="chat-nav-bottom-active">
+    <div class="container-fluid p-0 m-0" style="position: absolute;  bottom: 0px;">
+      <div id="typing-container" class="body" style=" background-color: #eeeeee"><div class="typing-container-suffix%"></div></div>
+
+
+    </div>
+  </div>
+<!-- keep -->
+
+<!-- keep -->
+<textarea class="form-control rounded-1 input-field" id="chat-input" t rows="2" id="chat-input" style="resize: none;""></textarea>
+<!-- keep -->
+
+<!-- keep -->
+<textarea class="form-control rounded-1 input-field" id="search-input" t rows="1" id="chat-input" style="resize: none; overflow-y:hidden;"></textarea>
+<!-- keep -->
+
+
+
+
+
+
+        <div>
+          <input class="btn btn-primary btn-sm" disabled id="chat-submit" type="button" value="Send" onclick="send(this)" style="margin-left: 10px;">
+        </div>
+
+<!-- chat  -->
+<div class="contentHeight chat-content%" id="chat-content">
+
+<div class="body"></div>
+
+</div>
+
+
+<!-- keep -->
+<div id="chat-log-container" >
+  <div id="chat-load-messages-container" >
+  </div>
+  <div class="container-fluid pt-2 pb-2 ">
+    <div id="chat-log-list" class="body" ></div>
+    </div>
+    <div class="container-fluid">
+      <div class="fs-6 p-2" id="chat-typing" style="color: black; "></div>
+    </div>
+</div>
+<!-- keep -->
+
+<button class="btn border border-1 action%%%" id="button" type="button" style="width: 100%;">
+<div class="displayName"></div>
+</button>
+
+
+<button class="btn border border-1 action%%%" id="contactListButton" type="button" style="width: 100%;">
+<div class="d-flex justify-content-between">
+  <div class="ps-2 displayName"></div>
+  <div class="pe-2">
+    <small><div class="lastSeen-hook">Status</div></small>
+    <div class="menu-hook"></div>
+  </div>
+</div>
+</button>
+<!-- regular button -->
+
+<div class="dropdown" id="dropdown">
+  <a class="btn btn-secondary dropdown-toggle btn-sm" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+    more
+  </a>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+  </ul>
+</div>
+
+<li id="dropdown-item"><a class="dropdown-item">a</a></li>
+
+
+
+  <div id="group-chat-nav-bottom-inactive">
+    <ul id="invite-content-list"></ul>
+    </div>
+
+    <div id="group-chat-nav-top-inactive">
+        <input id="chat-close" type="button" value="Delete" onclick="deleteGroup(this)">
+
+    </div>
+
+
+<div id="group-chat-nav-top-left">
+    <input class="btn border border-1" id="chat-close" type="button" value="Delete" onclick="deleteGroup(this)" style="width: 100%;">
+</div>
+
+<!-- group top navigation -->
+<div id="group-chat-nav-top-active">
+  <input class="btn border border-1" id="chat-close" type="button" value="Delete" onclick="deleteGroup(this)" style="width: 100%;">
+  <input class="btn border border-1" id="chat-leave" type="button" value="Leave group" onclick="leaveGroup(this)" style="width: 100%;">
+</div>
+<!-- end group top navigation -->
+
+<!-- admin top navigation -->
+<div id="group-chat-nav-top-active-admin">
+  <div id="admin-menu">
+
+  </div>
+  <input class="btn border border-1" id="chat-close" type="button" value="Delete" onclick="deleteGroup(this)" style="width: 100%;">
+  <input class="btn border border-1" id="chat-leave" type="button" value="Leave group" onclick="leaveGroup(this)" style="width: 100%;">
+</div>
+<!-- ebd admin top navigation -->
+
+
+{% include '__templates-admin.html' %}
+
+<div class="menu%%%" id="menu">
+</div>
+
+
+<div id="empty">
+  <div id="body">
+</div>
+
+<!-- accordion -->
+<div class="accordion" id="accordion">
+
+</div>
+<!-- end accordion -->
+
+<!-- accordion item -->
+    <div class="accordion-item " id="accordion-item">
+      <h2 class="accordion-header accordion-header%%" id="makeAdmin">
+        <button class="accordion-button admin-button accordion-button%%" id="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse" aria-expanded="false" aria-controls="collapse" style="background-color: #e6e6e6"">
+        </button>
+      </h2>
+      <div id="collapse" class="accordion-collapse collapse collapse%%" aria-labelledby="" data-bs-parent="#accordion" style="background-color: #eeeeee">
+        <div class="accordion-body list-group p-0" id="accordion-body"></div>
+        <div id="accordion-items"></div>
+
+        <div id="accordion-footer"></div>
+      </div>
+
+    </div>
+<!-- end accordion item -->
+
+
+
+
+
+
+
+<div id="typing-user-container" class="info%% d-flex align-items-center me-1">
+<div id="typing-username" class="pk% username%%"></div>
+<div id="typing-seperator" class="pk% seperator% seperator%%"></div>
+</div>
+
+
+
+
+<!-- input inactive -->
+<div id="chat-nav-bottom-inactive" >
+  <div class="container-fluid" style="background-color: black; position: absolute;  bottom: 0px;">
+    <div class="d-flex justify-content-between m-2">
+      <textarea class="form-control rounded-1" id="chat-input" t rows="2" disabled id="chat-input" style="resize: none;"></textarea>
+      <div>
+        <input class="btn btn-primary btn-sm" id="chat-submit" type="button" value="Send" disabled style="margin-left: 10px;">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- end input inactive -->
+<div class="list-group-item d-flex justify-content-between align-items-center p-0 rounded-0 contact-item" id="contact">
+    <div class="d-flex align-items-center justify-content-between p-3 action%%%"  id="contacts-content-username-container" style="height: 100%; width: 100%;" onclick="clickButton(this)">
+    <div class="p-0 username" style="margin-left:10px;"></div>
+      <small class="ltsn%"></small>
+    </div>
+
+
+    <div>
+      <button class="btn btn-sm border border-1" id="contacts-content-username-remove" type="button" onclick="click(this)" style="margin-right:10px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16" style="color: black; vertical-align: -.125em;">
+          <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+          <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+        </svg>
+      </button>
+      </div>
+</div>
+
+
+<!-- group -->
+<label class="list-group-item rounded-0 p-4 pt-3 pb-3" id="contactCreateGroup">
+  <input  class="group-input form-check-input me-1" type="checkbox" style="float:left">
+  <div style="float:left"> g </div>
+  <small class="%ltsn" style="float:right;"> ffs </small>
+</label>
+<!-- end group -->
+
+<div id="tempMenu"></div>
+
+
+  <!-- contacts -->
+  <div class="list-group-item d-flex justify-content-between align-items-center p-0 rounded-0 contact-item" id="contacts-content-item">
+      <div class="d-flex align-items-center justify-content-between p-3"  id="contacts-content-username-container" style="height: 100%; width: 100%;" onclick="newGroup(this, 'private', 'contacts')">
+      <div class="p-0" id="contacts-content-username" style="margin-left:10px;"></div>
+        <small class="ltsn%"></small>
+      </div>
+
+
+      <div>
+        <button class="btn btn-sm border border-1" id="contacts-content-username-remove" type="button" onclick="removeContact(this)" style="margin-right:10px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16" style="color: black; vertical-align: -.125em;">
+            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+          </svg>
+        </button>
+        </div>
+  </div>
+  <!-- end contacts -->
+
+
+  <!-- private -->
+  <label id="private-content-item" class="list-group-item rounded-0" onclick="newGroup(this, 'private')">
+    <div id="private-content-username" style="float:left"> </div>
+  </label>
+  <!-- end private -->
+
+  <!-- group -->
+  <label id="group-content-item" class="list-group-item rounded-0 p-4 pt-3 pb-3 group-item">
+    <input id="group-content-username-select" class="group-input form-check-input me-1" type="checkbox" style="float:left">
+    <div id="group-content-username" style="float:left">  </div>
+    <small class="%ltsn" style="float:right;">  </small>
+  </label>
+  <!-- end group -->
+
+
+
+
+  <!-- chats new message counter -->
+  <span class="badge bg-primary rounded-pill" id='counter' style="margin-left: 5px;"></span>
+  <!-- end chats new message counter -->
+
+  <!-- total new message counter -->
+  <span id="counter-total" class="badge bg-secondary">0</span>
+
+  <!-- navbar-->
+  <span id="counter-total-top" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+    1
+  </span>
+  <!-- end total new message counter -->
+
+
+
+
+
+{% include '__templates-search.html' %}
+
+
+<div id="user-tab-title" class="d-flex align-items-center username%%" style="white-space: nowrap;  overflow:hidden;">
+  <div class="username%" style="margin-right: 5px;"></div>
+</div>
+
+<!-- right panels -->
+<div class="tab-pane" id="nav-pane-group" role="tabpanel" aria-labelledby="nav-tab-group">
+
+</div>
+<!-- end right panels -->
+
+<!-- chats -->
+<button class="list-group-item rounded-0 chat-tab" id="nav-tab-group" data-bs-toggle="tab" data-bs-target="#nav-pane-group" type="button" role="tab" aria-controls="nav-pane-group" aria-selected="true" onclick="selectGroup(this)">
+  <div class="body"></div>
+</button>
+
+
+
+<button class="list-group-item rounded-0 chat-tab" id="nav-tab-groupb" data-bs-toggle="tab" data-bs-target="#nav-pane-group" type="button" role="tab" aria-controls="nav-pane-group" aria-selected="true" onclick="selectGroup(this)">
+  <div class="d-flex w-100 justify-content-between">
+   <h5 class="mb-1 d-flex flex-row" id="tab-title" style="overflow:hidden;"></h5>
+   <div class="d-flex justify-content-between">
+     <small id="message-timestamp" style="white-space: nowrap; margin-left: 10px;">Never</small>
+
+     <div id="counter-holder">
+     </div>
+
+   </div>
+ </div>
+
+<div class="d-flex align-items-center">
+  <div class="latest_message%">No messages</div>
+  <div class="typing-container% d-flex align-items-center"><div class="typing-container-suffix% "></div>
+</div>
+
+
+
+
+   </div>
+</button>
+<!-- end chats -->
+
+<div id="panel">
+  <div class="body"></div>
+</div>
+
+<div id="dropdown-button" style="border: 1px solid; display:block;">
+  <div class="body">...</div>
+</div>
+
+<div id="dropdown-body" style="border: 0px solid; background-color: purple;">
+  <div class="body"></div>
+</div>
+
+
+
+
+
+
+
+<div id="flex-box" style="display:flex; align-self: stretch; flex-grow: 1;">
+  <div class="body" style="display:flex; align-self: stretch; flex-grow: 1;"></div>
+</div>
+
+<div id="flex-box3" style="display:flex; align-self: stretch; flex-grow: 1;">
+  <div class="body" style="display:flex; align-self: stretch; flex-grow: 1;">asdf</div>
+</div>
+
+<div id="stage">
+  <div class="body" style="display:flex; align-items: center; justify-content: center;">asdf</div>
+</div>
+
+
+
+<div id="flex-grow" style="flex-grow: 1;  border-bottom:dotted 2px black; background-color: red;">
+  <div class="body" >Grow</div>
+</div>
+
+
+<div id="message" class="d-flex justify-content-start ">
+      <div class="body p-3 pt-2 pb-2 m-2 mb-0 rounded-3 border border-1" style="background-color: white; overflow-wrap: break-word;"></div>
+</div>
+
+<div id="message-self" class="d-flex justify-content-end">
+      <div class="body p-3 pt-2 pb-2 m-2 mb-0 rounded-3 border border-1" style="background-color: #0d6dfd; overflow-wrap: break-word;"></div>
+</div>
+
+<div id="message-system" class="d-flex justify-content-center">
+      <div class="body p-3 pt-2 pb-2 m-2 mb-0 rounded-3 border border-1" style="background-color: grey; overflow-wrap: break-word; font-size: 12px"></div>
+</div>
+
+
+
+
+
+<span id="message-badge" class="badge rounded-pill bg-primary"><div class="body"></div></span>
+
+<!-- container-fluid d-flex align-items-center justify-content-between border-bottom -->
+  <div id="message_me" style="text-align:right;">
+      <div class="p-3 pt-2 pb-2 m-2 mb-0 rounded-1 border border-1" style="background-color: white;  display:inline-block;">
+        <small id="from" style=""></small>
+          <div id="text" style="color: black">
+          </div>
+          <small id="chat-message-timestamp" style=""></small>
+      </div>
+  </div>
+
+</div>

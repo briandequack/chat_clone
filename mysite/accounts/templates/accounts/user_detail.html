@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block body_block %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    {{ user.username }}
+
+
+    <h3>Contacts</h3>
+    <ul>
+    {% for contact in user.contactlist.contacts.all %}
+      <li>
+        <a href="{% url 'chat:start_meeting' pk=contact.pk %}">{{ contact }}</a>
+      </li>
+    {% endfor %}
+    </ul>
+
+    <h3>Invites</h3>
+    <ul>
+    {% for contact in user.contact_requests.all %}
+      {% if contact.is_active %}
+
+      {% else %}
+      <li>{{ contact.sender.username }}
+        <a href="{% url 'accounts:accept_request' pk=contact.pk %}">Accept</a>
+        <a href="{% url 'accounts:reject_request' pk=contact.pk %}">Reject</a>
+      </li>
+      {% endif %}
+    {% endfor %}
+    </ul>
+
+  </body>
+</html>
+
+
+{% endblock%}

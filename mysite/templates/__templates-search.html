@@ -1,0 +1,66 @@
+
+<!-- search page inactive -->
+    <div class="d-flex align-items-center justify-content-center contentHeight" id="search-page-inactive">
+
+
+
+      <div class="mb-3 w-50">
+
+      <div class="d-flex  align-items-center" style="height: 48px;">
+      <input type="email" class="form-control" id="search-input" placeholder="Username">
+      <button class="btn btn-primary" id="search-submit" type="submit" onclick="search()" style="margin-left: 5px;">Search</button>
+    </div>
+    </div>
+      <div id="search-content-container" type="text">
+        <ul id="search-content-list"></ul>
+      </div>
+
+  </div>
+
+    <!-- end search page inactive -->
+
+
+
+
+    <!-- search page active -->
+    <div class="contentHeight" id="search-page-active">
+        <!-- search page header -->
+        <div class="container-fluid right-top-fixed-md border-bottom border-bottom w-100" style="background-color: white;">
+            <div class="d-flex align-items-center p-1 col-12 col-md-6">
+                <input type="email" class="form-control" id="search-input" placeholder="Username">
+                <button class="btn btn-primary" id="search-submit" type="submit" onclick="search()" style="margin-left: 5px;">Search</button>
+            </div>
+        </div>
+        <!-- end search page header -->
+
+        <!-- search page body -->
+        <div class="chat-log-messages p-3 " style="overflow: auto; height: calc(100vh - 103px); bottom: 0px;">
+              <!-- search page result -->
+              <div class="rounded-1 col-12 col-md-6 p-0" id="search-content-container" type="text">
+                  <div class="list-group" id="search-content-list"></div>
+              </div>
+              <!-- end search page result -->
+        </div>
+        <!-- search page body -->
+
+    </div>
+    <!-- end search page active -->
+
+    <!-- search result -->
+    <div id="search-content-item" class="d-flex justify-content-between align-items-center list-group-item" style="background-color: white;">
+          <div id="search-content-username" style="width: 100%;  overflow:hidden;"></div>
+          <div id="result-options" style="margin-left: 10px;"></div>
+    </div>
+    <!-- end search result -->
+
+
+    <!-- search result options -->
+    <!-- friend -->
+    <div id="search-result-options-contact">
+          <input class="btn btn-outline-primary btn-sm" id="search-content-username-remove" type="button" value="Remove contact" onclick="removeContact(this,'search')">
+    </div>
+    <!-- not friend -->
+    <div id="search-result-options">
+          <input class="btn btn-outline-primary btn-sm" id="search-content-username-add" type="button" value="Add contact" onclick="addContact(this)">
+    </div>
+    <!-- end search result option -->

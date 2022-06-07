@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<div class="container">
+  <h1>Sign up</h1>
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input class="btn btn-default" type="submit" value="Sign up">
+
+
+
+    <a href="{% url 'accounts:login2' %}">Login</a>
+
+  </form>
+</div>

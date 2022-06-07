@@ -1,0 +1,363 @@
+<!-- chat/templates/chat/room.html -->
+{% extends 'base.html' %}
+{% block body_block %}
+
+<style>
+#templates{
+  display: none
+}
+
+
+.contact{
+    color: #abb2bf;
+}
+.user{
+  text-align: right;
+    color: #abb2bf;
+}
+
+.room-menu{
+  padding-top: 100px;
+  background-color : #21252b;
+}
+
+.chat-window{
+  background-color: #282c34;
+  position: relative;
+}
+
+.chat-log{
+  background-color: #282c34;
+  position: absolute;
+  bottom: 10px;
+  top: 20px;
+
+}
+
+.chat-log-messages{
+  color: #abb2bf;
+  position:absolute;
+  bottom:0px;
+  right:0px;
+  left:0px;
+  overflow-y:auto;
+  max-height:100%;
+
+}
+
+.chat-activity{
+      color: #abb2bf;
+  position: absolute;
+  bottom: 30px;
+}
+
+.chat-control{
+  background-color: blue;
+  position: absolute;
+  bottom: 0px;
+}
+
+.contacts{
+  background-color: green;
+
+}
+
+.notifications{
+  background-color: purple;
+
+}
+
+.reveived-requests{
+  background-color: purple;
+}
+
+.send-requests{
+  background-color: purple;
+}
+
+.room-list-container{
+
+}
+
+.chat-button{
+
+}
+
+.button-text{
+  color: white;
+}
+.message-count{
+  color: white;
+}
+
+</style>
+
+<script>
+
+var rooms = {};
+class Room {
+  constructor(name, username) {
+    var self = this;
+    this.active = false;
+    this.button = 'button-' + name;
+    this.username = username;
+    this.members = ''
+    this.name = name;
+    this.chatMessagLog = 'chat-log-' + this.name;
+    this.chatMessagInput = 'chat-message-input-' + this.name;
+    this.chatMessagSubmit = 'chat-message-submit-' + this.name;
+    this.newMessage = 'new-messages-' + this.name;
+    this.newMessageCount = 0;
+    this.socket = new WebSocket(
+          'ws://'
+          + window.location.host
+          + '/ws/somerandomurl/'
+          + name
+          + '/'
+      );
+
+      this.socket.onmessage = function(e) {
+          const data = JSON.parse(e.data);
+          if (Object.keys(data)[0] == 'message'){
+              self.updateMessageLog(data);
+          } else if (Object.keys(data)[0] == 'new'){
+              self.newMessageCount = data['new'];
+              self.updateNewCount();
+          }
+      };
+
+
+      this.updateNewCount = function(){
+          if (self.newMessageCount == 0){
+              var div = document.getElementById(this.newMessage).innerHTML = '';
+          } else {
+              var div = document.getElementById(this.newMessage).innerHTML = self.newMessageCount;
+          };
+
+      };
+
+      this.updateMessageLog = function(data){
+          if (typeof data.message === 'string' || data.message instanceof String){
+                  self.addMessage(data.message, data.sender);
+                  if (self.active == false){
+                    self.newMessageCount += 1;
+                    self.updateNewCount();
+                  };
+          } else {
+              for (var i = 0; i < data.message.length; i++) {
+                  self.addMessage(data.message[i].text, data.message[i].author);
+              };
+          };
+      };
+
+      this.addMessage = function(message, sender){
+          var ul = document.getElementById(this.chatMessagLog);
+          var li = document.createElement("li");
+          if (sender == this.username){
+                li.className = "user"
+          } else {
+                li.className = "contact"
+          }
+          li.appendChild(document.createTextNode(message));
+          ul.appendChild(li);
+      };
+
+
+      document.getElementById(this.chatMessagSubmit).onclick = function(e) {
+          self.sendMessage();
+      }
+
+
+
+      // Room activity
+      document.getElementById(this.button).onclick = function(e) {
+          self.newMessageCount = 0;
+          self.updateNewCount();
+          // If another room is active change it to false
+          for (let room in rooms) {
+              if(room != self.name && rooms[room].active == true){
+                rooms[room].active = false;
+                rooms[room].sendActive(rooms[room].active);
+              }
+          };
+
+          // If this room is not active change to active
+          if(self.active != true){
+              self.active = true;
+              self.sendActive(self.active);
+          };
+
+      }
+
+      this.sendActive = function(status){
+          this.socket.send(JSON.stringify({
+              'active': status, 'sender': this.username
+          }));
+      }
+
+
+
+
+
+      document.getElementById(this.chatMessagInput).focus();
+      document.getElementById(this.chatMessagInput).onkeyup = function(e) {
+          if (e.keyCode === 13) {
+              self.sendMessage()
+          }
+      };
+
+      this.sendMessage = function(){
+          var message = document.getElementById(this.chatMessagInput).value
+          document.getElementById(this.chatMessagInput).value = '';
+          this.socket.send(JSON.stringify({
+              'message': message, 'sender': this.username
+          }));
+      }
+    }
+  }
+
+
+function addRoom(name){
+  roomTemplate = getTemplate("room-", name);
+  var roomContainer = document.getElementById("rooms")
+  roomContainer.appendChild(roomTemplate);
+  rooms[name] = new Room(name,'{{ user.username }}');
+};
+
+function addMenuItem(name, roomName){
+    menuTemplate = getTemplate("chat-menu-item-", name);
+    menuTemplate.getElementsByTagName("div")[0].setAttribute("data-bs-target", "#room-" + name);
+    menuTemplate.getElementsByTagName("div")[4].innerHTML = roomName;
+
+
+    var menuContainer = document.getElementById("room-list")
+    menuContainer.appendChild(menuTemplate);
+};
+
+function getTemplate(template, id){
+  var n = id;
+  var node = document.getElementById(template).cloneNode(true);
+  node.id = template + n;
+
+  var tags = ["div","ul","input","li","p"];
+  for (let i = 0; i < tags.length; i++) {
+    var list = node.getElementsByTagName(tags[i]);
+    for (let item of list) {
+      if (item.id.length != 0){
+          item.id = item.id + n
+      };
+    };
+  };
+
+  return node;
+
+};
+
+
+
+
+</script>
+
+
+
+
+<div id="templates">
+
+      <div class="tab-pane" id="room-" role="tabpanel" >
+        <div class="container-fluid p-0">
+          <div class="row">
+
+            <div class="col-12 chat-log">
+              <div class="chat-log-messages">
+                <ul class="p-5" style="list-style: none" id="chat-log-">
+                </ul>
+              </div>
+            </div>
+
+            <div class="col-12 chat-activity" id="typing-">
+            </div>
+          <!-- Send message -->
+            <div class="col-12 chat-control">
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-9">
+                    <input style="width:100%; line-height: 30px;"  id="chat-message-input-" type="text"><br>
+                  </div>
+                  <div class="col-3">
+                    <input class="btn btn-primary" id="chat-message-submit-" type="button" value="Send">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <li id="chat-menu-item-" class="col-12">
+        <div  id="button-" data-bs-toggle="pill" data-bs-target="#room-">
+          <div  class="container-fluid">
+            <div class="row">
+              <div  class="col-9 p-3">
+                <div class="button-text" id="button-value-"></div>
+              </div>
+              <div class="message-count col-3 p-3">
+                <div id="new-messages-"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+  </li>
+
+</div>
+
+
+
+<div class="container-fluid ">
+<div class="row vh-100">
+  <!-- Sidebar -->
+  <div class="col-3 room-menu p-0 pt-5">
+
+    <!-- chats -->
+    <div class="container-fluid room-list-container mt-3 p-0">
+      <div class="row">
+
+      <ul id="room-list" class="nav mb-3t p-0">
+          {% for room in rooms %}
+
+          {% for membership in room.memberships.all %}
+            {% if membership.user == user %}
+              {{ membership.open }}
+            {% endif %}
+          {% endfor %}
+
+          <script>
+              addMenuItem('{{ room.pk }}',
+              '{% for member in room.members.all %} {% if user != member %} {{ member }} {% endif %} {% endfor %}'
+              );
+            </script>
+      {% endfor %}
+    </ul>
+</div>
+</div>
+</div>
+
+  <div class="col-9 chat-window">
+    <div id="rooms" class="tab-content" id="pills-tabContent">
+      {% for room in rooms %}
+      <script>
+        addRoom('{{ room.pk }}')
+      </script>
+      {% endfor %}
+
+    </div>
+  </div>
+
+
+</div>
+</div>
+
+
+
+
+
+{% endblock %}
