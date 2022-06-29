@@ -145,7 +145,7 @@ if DEBUG == False:
 MEDIA_URL='/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-LOGOUT_REDIRECT_URL = '/login'
+LOGOUT_REDIRECT_URL = 'http://142.93.133.179/login'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
