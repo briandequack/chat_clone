@@ -1410,7 +1410,7 @@ class LogoutButton extends BasicButton{
   }
 
   request() {
-    window.location.replace("http://127.0.0.1:8000/logout/");
+    window.location.replace("/logout");
   }
 
 }
