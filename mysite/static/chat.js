@@ -95,7 +95,9 @@ class Chat2 extends CenterRight {
     for (var member of members) {
       var newMember = this.members.create2(new Member2(member));
       if (newMember.status == 'active' || newMember.status == 'inactive'){
+        if (member['name'] != username){
           this.addUserToHeader(member['name']);
+        }
       }
 
     }
