@@ -397,7 +397,7 @@ class TypingInput extends Container {
     this.create2(new JustifyContentBetween('Bottom', 'bottom'));
     this.getByTitle2('bottom').create2(new InputField('Input', 'input'));
     this.getByTitle2('bottom').create2(new EmptyContainer('Right', 'right'));
-    this.getByTitle2('right').create2(new BasicButton('Send', 'send'), 'end');
+    this.getByTitle2('right').create2(new SendButton('Send', 'send'), 'end');
     this.getByTitle2('send').hide();
   }
 }
@@ -409,6 +409,8 @@ class Chatlog extends Container {
     this.body = this.template.getElementsByClassName('body')[0];
   }
 }
+
+
 
 
 class InputField extends Clickable {
@@ -426,13 +428,14 @@ class InputField extends Clickable {
     if (this.validateInput(this.body.value)) {
 
       if (this.typing == false) {
-        console.log('SEND I AM TYPING');
+        console.log('SEND I AM TYPING2');
         this.sendActivity('yes');
         this.typing = true;
       }
 
       this.par.getByTitle2('send').show();
       if (kcode === 13) {
+        console.log('typing!!mofo')
         socket.send(JSON.stringify({
           'type': 'message', 'message': this.body.value, 'from': username, 'to':this.par.par.par.pk
         }));
@@ -494,7 +497,6 @@ class BasicButton extends Clickable{
     console.log('DO SOMETHING BASIC', this.title)
   }
 }
-
 
 
 class Center extends EmptyContainer {
@@ -1410,7 +1412,7 @@ class LogoutButton extends BasicButton{
   }
 
   request() {
-    window.location.replace("/logout");
+    window.location.replace("http://127.0.0.1:8000/logout/");
   }
 
 }
@@ -1671,76 +1673,11 @@ class AdminMenuGroup extends Menu2 {
 
 
 
-/*
-
-class CollapseableOptions extends Collapseable {
-  constructor(displayName, title, minItems=null) {
-    super(displayName, title, minItems);
-  }
-
-  meta() {
-    this.self.create2(new CollapseButton('Button','button', this.attribute));
-    this.self.create2(new CollapseBody('Body','body', this.attribute));
-    this.getByTitle2('body').create2(new Accordion2('Accordion','accordion'));
-    this.role = this.par.par.getByTitle2(username).getRole();
-    if (this.role == 'admin') {
-      this.admin();
-    } else {
-      this.member();
-    }
-  }
-
-  admin() {
-    for (var member of this.par.par.getByTitle2('members').items) {
-      if (member.role == 'admin') {
-        this.getByTitle2('accordion').create2(new AccordionItem2('Remove admin','removeadmin'));
-        this.getByTitle2('removeadmin').create2(new Checkbox2(member.name, member.name, member.name, this.par.par.pk),'start');
-        this.getByTitle2('removeadmin').create2(new CheckboxSubmit2('Remove admin', 'removeadmin', 'remove_contact_group_admin'),'end');
-
-      } else if (member.role == 'member') {
-        this.getByTitle2('accordion').create2(new AccordionItem2('Make admin','makeadmin'));
-        this.getByTitle2('makeadmin').create2(new Checkbox2(member.name, member.name, member.name, this.par.par.pk),'start');
-        this.getByTitle2('makeadmin').create2(new CheckboxSubmit2('Make admin', 'makeadmin', 'make_contact_group_admin'),'end');
-      }
-      if (member.status == 'active' || member.status == 'inactive') {
-        this.getByTitle2('accordion').create2(new AccordionItem2('Remove member','removecontact'));
-        this.getByTitle2('removecontact').create2(new Checkbox2(member.name, member.name, member.name, this.par.par.pk),'start');
-        this.getByTitle2('removecontact').create2(new CheckboxSubmit2('Remove member', 'removecontact', 'remove_contact_from_group'),'end');
-      }
-    }
-    for (var contact of root.getByTitle2('members').items) {
-      var found = false;
-      for (var member of this.par.par.getByTitle2('members').items) {
-        if (contact.name == member.name) {
-          if(member.status == 'active' || member.status == 'inactive') {
-            found = true;
-            break;
-          }
-        }
-      }
-      if (found == false){
-        this.getByTitle2('accordion').create2(new AccordionItem2('Invite contact','invitecontact'));
-        this.getByTitle2('invitecontact').create2(new Checkbox2(contact.name, contact.name, contact.name, this.par.par.pk),'start');
-        this.getByTitle2('invitecontact').create2(new CheckboxSubmit2('Invite contact', 'invitecontact', 'add_contact_to_group'),'end');
-      }
-    }
-  }
-
-  member() {
-
-  }
-
-}
-*/
-
-
-
-
 class ChatInputField extends Clickable {
   constructor(displayName, title) {
     super(displayName, title);
     this.setTemplate(cloneHTML("chat-input", this.title, this.title.toLowerCase()));
-    this.template.setAttribute('onkeyup', 'clickable(this,event);event.stopPropagation();');
+    this.template.setAttribute('onkeyup', 'clickable(this,event);');
     this.template.setAttribute('onclick', '');
     this.body = this.template;
     this.inputValidated = false;
@@ -1749,16 +1686,22 @@ class ChatInputField extends Clickable {
 
   addChildren() {}
 
+
   send() {
-    event.target.value = event.target.value.replace(/[\r\n\v]+/g, '');
     var kcode = (window.event) ? event.keyCode : event.which;
     if (this.validateInput(this.body.value)) {
+
       this.par.par.button.show();
       this.startedTyping();
-      if (kcode === 13) {
-        this.inputValidated = true;
-        this.stoppedTyping();
-      }
+
+      var str = this.body.value;
+        for (var i = 0; i < str.length; i++) {
+          if (str[i] === '\n' || str[i] === '\r') {
+              this.inputValidated = true;
+              this.stoppedTyping();
+          };
+      };
+
 
     } else {
       this.inputValidated = false;
@@ -1816,6 +1759,16 @@ class ChatButton extends BasicButton{
     super(arguments[0], arguments[1]);
     this.body.innerHTML = this.displayName;
   }
+
+  request() {
+
+    socket.send(JSON.stringify({
+      'type': 'message', 'message': this.par.items[0].body.value, 'from': username, 'to':this.par.par.par.par.par.pk
+    }));
+    this.par.items[0].body.value = '';
+    this.par.par.button.hide();
+    this.inputValidated = false;
+  }
 }
 
 
@@ -1852,13 +1805,19 @@ class SearchInputField extends Clickable {
   addChildren() {}
 
   send() {
-    event.target.value = event.target.value.replace(/[\r\n\v]+/g, '');
+
     var kcode = (window.event) ? event.keyCode : event.which;
     if (this.validateInput(this.body.value)) {
       this.par.par.button.show();
-      if (kcode === 13) {
-        this.inputValidated = true;
-      }
+
+            var str = this.body.value;
+              for (var i = 0; i < str.length; i++) {
+                if (str[i] === '\n' || str[i] === '\r') {
+                    this.inputValidated = true;
+
+
+                };
+            };
 
     } else {
       this.inputValidated = false;
@@ -1868,8 +1827,9 @@ class SearchInputField extends Clickable {
 
   request() {
     if (this.inputValidated) {
+      var text = this.body.value.replace(/[\r\n\v]+/g, '');
       socket.send(JSON.stringify({
-        'type':'search', 'message':this.body.value, 'dir':this.dir
+        'type':'search', 'message':text, 'dir':this.dir
       }));
       this.body.value = '';
       this.par.par.button.hide();
@@ -1895,7 +1855,22 @@ class SearchButton extends BasicButton{
     super(arguments[0], arguments[1]);
     this.body.innerHTML = this.displayName;
   }
-}
+
+  request(){
+
+
+    var text = this.par.items[0].body.value.replace(/[\r\n\v]+/g, '');
+    socket.send(JSON.stringify({
+      'type':'search', 'message':text, 'dir':this.dir
+    }));
+    this.par.items[0].body.value = '';
+    this.par.par.button.hide();
+    this.inputValidated = false;
+  }
+
+  }
+
+
 
 
 class SearchInput extends EmptyContainer {
@@ -2149,11 +2124,9 @@ class SidebarLeftButton extends SidebarButton{
 
 
     if(this.par.par.getWidth() < 500) {
-      console.log('add margin')
       root.getByTitle2('header').template.style.marginLeft = '30px';
 
     } else {
-      console.log('no margin')
       root.getByTitle2('header').template.style.marginLeft = '0px';
       if (this.par.par.items[0].selected == false) {
         this.par.par.getByTitle2(this.par.title).left = 0;
