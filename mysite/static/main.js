@@ -1,131 +1,74 @@
 
 
+// Create the root container
+var root = new Container('root','ROOT');
+root.template = document.getElementById('root');
+root.body = root.template;
+root.dir = 'ROOT/';
+root.par = root;
+root.meta();
+
+
+var stage = root.create2(new MaxDimensions('Container','container',0, 1100, 700));
+var page = stage.create2(new LeftCenter('doenotmatter','page',0, 1100, 1100));
+var leftSidebar = page.leftSidebar;
+var pageStack = page.center.create2(new Stack('Container','chats',0, 1100, 1100, 0, 0, {'notSelectedChildX':['getWidth',-1]}));
+
+var header = leftSidebar.create2(new JustifyContentBetween('Header', 'header'));
+
+
+if (leftSidebar.par.getWidth() < 500) {
+  header.template.style.marginLeft = '30px';
+} else {
+  header.template.style.marginLeft = '0px';
+}
+
+
+header.create2(new UserButton(username, username,'menustack', 'chatsmenu'));
+var dropdown = header.create2(new Dropper('...', 'asdf','menustack', 'chatsmenu'));
+dropdown.main.create2(new StackButton('Chats', 'button3','menustack', 'chatsmenu'));
+dropdown.main.create2(new StackButton('Contacts', 'button4','menustack', 'contactsmenu'));
+dropdown.main.create2(new StackButton('Create group', 'button5','menustack', 'creategroupmenu'));
+dropdown.main.create2(new LogoutButton('Logout', 'logout'));
+
+
+var menuStack = leftSidebar.create2(new Stack('Container','menustack',0, 1100, 700, 0, 50, { 'notSelectedChildY':['getHeight',-1]}));
+var chatMenu2 = menuStack.create2(new ChatsMenu2('Container','chatsmenu',0, 1100, 700));
+
+
+contactsMenu2 = menuStack.create2(new ContactsMenu2('Container','contactsmenu',1100, 1100, 700));
+createGroupMenu = menuStack.create2(new CreateGroupMenu('Container','creategroupmenu',1100, 1100, 700));
+findContactMenu = menuStack.create2(new FindContactMenu('Container','findcontactmenu',1100, 1100, 700));
+
+var onlineUsers = root.create2(new List('Oline users', 'onlineusers'))
+
+
 var groups = []
 var contacts = []
 var online_users = [];
-var chats = [];
-
-var socket = new WebSocket(
-    'ws://'
-    + window.location.host
-    + '/ws/sendreceive/'
-    + username
-    + '/'
-);
-
-socket.onmessage = function(e) {
-    const data = JSON.parse(e.data);
-
-    if (data['type'] == 'ping'){
-        socket.send(JSON.stringify({
-        'type': 'ping', 'from': data['from']
-        }));
-    }
-
-    if (data['type'] == 'pong'){
-        socket.send(JSON.stringify({
-        'type': 'pong', 'from': data['from']
-        }));
-    }
-
-    if (data['type'] == 'receive_groups_of_self'){
-        for (var group of data['message']){
-            updateGroups(group)
-        }
-    }
-
-    if (data['type'] == 'online_contacts'){
-        online_users = [];
-        for (let i = 0; i < data['message'].length; i++) {
-              online_users.push(data['message'][i].name);
-        }
-        document.getElementById('online_contacts').innerHTML = 'online: ' + online_users
-    }
-
-    if (data['type'] == 'offline'){
-        socket.send(JSON.stringify({
-        'type': 'offline', 'from': data['from']
-        }));
-    }
-
-    if (data['type'] == 'message'){
-        pk = data['to']
-        current_group = getGroup(pk)
-        current_membership = getMembership(current_group)
-        console.log('my currennt membership', current_membership)
-        if (current_membership['status'] == 'inactive' || current_membership['status'] == 'deleted'){
-            current_membership['status'] = 'active';
-            updateMembershipStatus(pk, 'active');
-            console.log('current_group', current_group)
-            addGroup(current_group);
-            addMessage(data['to'],data['message'])
-        } else {
-            addMessage(data['to'],data['message'])
-        }
-      }
+var contactList = [];
 
 
-            if (data['type'] == 'membership_has_been_updated'){
-              console.log('update')
-                group = data['message'];
-                pk = group['room']['pk'];
-                old_group = getGroup(pk);
-
-                new_membership = getMembership(group);
-                if (old_group != false){
-                  old_membership = getMembership(old_group);
-
-                  // Check if your status has been updated
-                  if (old_membership['status'] != new_membership['status']){
-                    console.log('my membership changed')
-                      if(new_membership['status'] == 'active' || new_membership['status'] == 'blocked'){
-
-                          if (old_membership['status'] != 'left'){
-                            addGroup(data['message']);
-                          }
-
-                          if (old_membership['status'] == 'left'){
-                            setNavigation(group)
-                          }
-
-                          setNavigation(group)
-                      } if (new_membership['status'] == 'left'){
-                        setNavigation(group)
-                      }
-                  }
-                  // Check if your role has been updated
-                  if (old_membership['role'] != new_membership['role']){
-                        if(new_membership['status'] == 'active'){
-                              setNavigation(group)
-                      }
-                  }
-
-                } else {
-                    if (data['from'] == '{{ user }}'){
-
-                        new_membership['status'] = 'active'
-                        updateMembershipStatus(pk, 'active');
-                        addGroup(data['message']);
-
-                    }
-                }
-
-                updateGroups(group);
-
-                membership = getMembership(group)
-                if (group['room']['type'] == 'group'){
-                    if (membership['status'] == 'active'){
-                        setGroupTitle(group)
-                        if (membership['role'] == 'admin'){
-                          setAdminPanel(group)
-                        }
-                    }
-                  }
-            }
 
 
-            if (data['type'] == 'search_results'){
-                searchResults(data);
-            }
 
-        };
+
+class ChatMenu extends EmptyContainer{
+  constructor(displayName, title, minItems=null) {
+    super(displayName, title, minItems);
+  }
+
+}
+
+
+
+class ContactsMenu extends EmptyContainer{
+  constructor(displayName, title, minItems=null) {
+    super(displayName, title, minItems);
+
+  }
+  meta() {
+    this.self.create2(new Members('Members','members'));
+    this.create2(new Accordion2('Contacts accordion', 'contactsaccordion'));
+  }
+}

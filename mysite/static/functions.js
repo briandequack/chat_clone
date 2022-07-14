@@ -20,7 +20,17 @@ function test() {
      }
    }
 
+  if (activeElement.id == 'root') {
+    socket.send(JSON.stringify({
+    'type': 'request_user_datetime', 'message': {'bnananananan':name}, 'from': username
+    }));
+    console.log('you clicked the root')
+  }
+
    var rightSidebarsAncestors = currentDir.getAncestors('constructor', 'MaxDimensionsRight');
+
+
+
    var rootRightSidebars = root.getChildren('constructor', 'MaxDimensionsRight');
    if (rightSidebarsAncestors.length == 0) {
      if (currentDir.constructor.name != 'OpenOptionsButton'){
